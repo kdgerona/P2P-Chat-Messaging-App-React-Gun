@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState, useRef } from 'react';
 import { AppContext } from '../../App';
 import { IMessage } from './types';
 import styled from 'styled-components';
@@ -6,6 +6,7 @@ import styled from 'styled-components';
 const Chat: React.FC = () => {
   const { gun, state, dispatch } = useContext(AppContext);
   const [messageInput, setMessageInput] = useState('');
+  const messageEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     /**
@@ -31,6 +32,11 @@ const Chat: React.FC = () => {
 
     return () => messages?.off();
   }, []);
+
+  useEffect(() => {
+    if (!messageEndRef) return;
+    messageEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [state?.messages, state?.messages.length]);
 
   const messageInputHandler = (
     event: React.SyntheticEvent<HTMLInputElement>
@@ -74,6 +80,7 @@ const Chat: React.FC = () => {
           ) : (
             <h3>No messages yet</h3>
           )}
+          <div ref={messageEndRef}></div>
         </div>
         <form className='form' onSubmit={sendMessageHandler}>
           <input
