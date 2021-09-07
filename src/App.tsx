@@ -3,10 +3,10 @@ import Gun from 'gun';
 import reducer from './reducer';
 import { IInitialState, IContext } from './types';
 // Components
-import Chat from './components/chat';
+import { Chat, Home } from './components';
 
 const initialState: IInitialState = {
-  messages: [],
+  messages: {},
 };
 
 const gun = Gun({
@@ -26,7 +26,7 @@ const App = () => {
         gun,
       }}
     >
-      <Chat />
+      {state.username ? <Chat /> : <Home />}
     </AppContext.Provider>
   );
 };

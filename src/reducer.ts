@@ -11,7 +11,15 @@ const reducer: React.Reducer<IInitialState, TActions> = (state, action) => {
     case 'SET_MESSAGE':
       return {
         ...state,
-        messages: [...state.messages, action.payload],
+        messages: {
+          ...state.messages,
+          [action.payload.id]: action.payload,
+        },
+      };
+    case 'SET_USERNAME':
+      return {
+        ...state,
+        username: action.payload,
       };
     default:
       return state;

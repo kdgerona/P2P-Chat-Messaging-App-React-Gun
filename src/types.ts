@@ -8,18 +8,26 @@ export interface IContext {
 }
 
 export interface IInitialState {
-  messages: IMessage[];
+  messages: Record<string, IMessage>;
+  username?: string;
 }
 
-export type TActions = ISetMessageAction;
+export interface IMessage {
+  id: string;
+  name: string;
+  message: string;
+  created_date: string;
+}
+
+// Actions
+export type TActions = ISetMessageAction | ISetUsernameAction;
 
 export interface ISetMessageAction {
   type: 'SET_MESSAGE';
   payload: IMessage;
 }
 
-export interface IMessage {
-  name: string;
-  message: string;
-  created_date: string;
+export interface ISetUsernameAction {
+  type: 'SET_USERNAME';
+  payload: string;
 }

@@ -1,7 +1,8 @@
 import React, { useContext, useEffect, useState, useRef } from 'react';
 import { AppContext } from '../../App';
-import { IMessage } from './types';
+// import { IMessage } from './types';
 import styled from 'styled-components';
+import { v4 } from 'uuid';
 
 const Chat: React.FC = () => {
   const { gun, state, dispatch } = useContext(AppContext);
@@ -16,17 +17,18 @@ const Chat: React.FC = () => {
      */
     const messages = gun!.get('messages');
 
-    messages.map().once((data) => {
-      dispatch!({
-        type: 'SET_MESSAGE',
-        payload: data as IMessage,
-      });
-    });
+    // messages.map().once((data) => {
+    //   dispatch!({
+    //     type: 'SET_MESSAGE',
+    //     payload: data as IMessage,
+    //   });
+    // });
 
-    messages.on((data) => {
+    //@ts-ignore
+    messages.map().on((data, key, _msg, _evt) => {
       dispatch!({
         type: 'SET_MESSAGE',
-        payload: data as IMessage,
+        payload: data,
       });
     });
 
@@ -48,13 +50,16 @@ const Chat: React.FC = () => {
     event: React.SyntheticEvent<HTMLFormElement | HTMLButtonElement>
   ) => {
     event.preventDefault();
+    const message_id = v4();
     const messages = gun?.get('messages');
-    messages?.set({
-      name: 'Kevin',
+    const message = gun?.get(`message/${message_id}`).put({
+      id: message_id,
+      name: state?.username,
       message: messageInput,
       created_date: new Date().toISOString(),
     });
 
+    messages?.set(message!);
     setMessageInput('');
   };
 
@@ -64,16 +69,16 @@ const Chat: React.FC = () => {
         <h1>Direct P2P Messaging</h1>
         <div
           className={`${
-            state?.messages.length ? '' : 'empty-'
+            Object.keys(state?.messages ?? {}).length ? '' : 'empty-'
           }chat-window-container`}
         >
-          {state?.messages.length ? (
-            state?.messages.map((message) => {
+          {Object.keys(state?.messages ?? {}).length ? (
+            Object.values(state?.messages ?? {}).map((message) => {
               return (
-                <div key={message.created_date}>
+                <div key={message.id}>
                   <h3>{message.name}</h3>
                   <p>{message.message}</p>
-                  <p>{message.created_date}</p>
+                  <p>{new Date(message.created_date).toLocaleString()}</p>
                 </div>
               );
             })
